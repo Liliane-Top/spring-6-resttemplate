@@ -8,6 +8,7 @@ class Spring6ResttemplateApplicationTests {
 
   @Test
   void contextLoads() {
+    System.out.println("it works");
   }
 
 }
