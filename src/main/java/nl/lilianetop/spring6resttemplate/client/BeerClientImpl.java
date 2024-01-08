@@ -1,5 +1,6 @@
 package nl.lilianetop.spring6resttemplate.client;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import nl.lilianetop.spring6resttemplate.model.BeerDTO;
 import nl.lilianetop.spring6resttemplate.model.BeerDTOPageImpl;
@@ -17,6 +18,15 @@ public class BeerClientImpl implements BeerClient {
 
   private final RestTemplateBuilder restTemplateBuilder;
   public static final String GET_BEER_PATH = "/api/v1/beer/";
+  public static final String GET_BEER_BY_ID_PATH = "/api/v1/beer/{beerId}";
+
+
+  @Override
+  public BeerDTO getBeerById(UUID beerId) {
+    RestTemplate restTemplate = restTemplateBuilder.build();
+
+    return restTemplate.getForObject(GET_BEER_BY_ID_PATH, BeerDTO.class, beerId);
+    }
 
   @Override
   public Page<BeerDTO> listBeers() {
@@ -70,4 +80,5 @@ public class BeerClientImpl implements BeerClient {
 
     return pageResponseEntity.getBody();
   }
+
 }
