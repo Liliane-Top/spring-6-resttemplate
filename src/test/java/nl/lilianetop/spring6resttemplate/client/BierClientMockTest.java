@@ -3,12 +3,14 @@ package nl.lilianetop.spring6resttemplate.client;
 import static nl.lilianetop.spring6resttemplate.client.BeerClientImpl.GET_BEER_BY_ID_PATH;
 import static nl.lilianetop.spring6resttemplate.client.BeerClientImpl.GET_BEER_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestToUriTemplate;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withAccepted;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withResourceNotFound;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,6 +35,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -72,6 +75,33 @@ class BierClientMockTest {
 
     beerDTOTestObject = getBeerDto();
     beerDTOJson = objectMapper.writeValueAsString(beerDTOTestObject);
+  }
+
+  @Test
+  void deleteBeerNotFound() {
+
+    server.expect(method(HttpMethod.DELETE))
+        .andExpect(requestToUriTemplate(URL + GET_BEER_BY_ID_PATH, beerDTOTestObject.getId()))
+        .andRespond(withResourceNotFound());
+
+    assertThrows(HttpClientErrorException.class, () -> {
+      beerClient.deleteBeer(beerDTOTestObject.getId());
+    });
+
+    server.verify();
+
+  }
+
+  @Test
+  void deleteBeer() {
+
+    server.expect(method(HttpMethod.DELETE))
+        .andExpect(requestToUriTemplate(URL + GET_BEER_BY_ID_PATH, beerDTOTestObject.getId()))
+        .andRespond(withNoContent());
+
+    beerClient.deleteBeer(beerDTOTestObject.getId());
+// to check if the method has been called as it return type is void
+    server.verify();
   }
 
   @Test
