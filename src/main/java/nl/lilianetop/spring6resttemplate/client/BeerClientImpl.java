@@ -18,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class BeerClientImpl implements BeerClient {
 
   private final RestTemplateBuilder restTemplateBuilder;
-  public static final String GET_BEER_PATH = "/api/v1/beer/";
+  public static final String GET_BEER_PATH = "/api/v1/beer";
   public static final String GET_BEER_BY_ID_PATH = "/api/v1/beer/{beerId}";
 
 
@@ -56,7 +56,7 @@ public class BeerClientImpl implements BeerClient {
 
   @Override
   public Page<BeerDTO> listBeers() {
-    return listBeers(null, null, null, 0, 25);
+    return listBeers(null, null, null, null, null);
   }
 
   @Override

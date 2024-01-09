@@ -4,6 +4,7 @@ import java.util.UUID;
 import nl.lilianetop.spring6resttemplate.model.BeerDTO;
 import nl.lilianetop.spring6resttemplate.model.BeerStyle;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 public interface BeerClient {
 

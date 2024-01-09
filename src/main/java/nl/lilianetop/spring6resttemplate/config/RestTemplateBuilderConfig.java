@@ -9,6 +9,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 
 @Configuration
 public class RestTemplateBuilderConfig {
+
   @Value("${rest.template.rootUrl}")
   String rootUrl;
 
