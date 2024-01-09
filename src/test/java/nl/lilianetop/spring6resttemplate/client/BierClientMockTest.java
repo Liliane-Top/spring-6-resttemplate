@@ -8,6 +8,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestToUriTemplate;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withAccepted;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -74,30 +75,47 @@ class BierClientMockTest {
   }
 
   @Test
+  void updateBeer() {
+
+    server.expect(method(HttpMethod.PUT))
+        .andExpect(requestToUriTemplate(URL + GET_BEER_BY_ID_PATH, beerDTOTestObject.getId()))
+        .andRespond(withNoContent());
+
+    mockGetOperation();
+
+    BeerDTO beerDTOResponse = beerClient.updateBeer(beerDTOTestObject);
+    assertThat(beerDTOResponse.getBeerName()).isEqualTo("Mango Bobs");
+
+
+  }
+
+  @Test
   void createBeer() {
     //the method uses the restTemplate for 2 calls postForLocation(), getForObject()
 
-    // create an uri as we need to get the location which contains the beerId (UUID) which is reuired to get that beerObject
+    // create an uri as we need to get the location which contains the beerId (UUID) which is required to get that beerObject
     URI uri = UriComponentsBuilder.fromPath(GET_BEER_BY_ID_PATH).build(beerDTOTestObject.getId());
     // first call to mockserver to get the location which contains the beerId(UUID)
     server.expect(method(HttpMethod.POST)).andExpect(requestTo(URL + GET_BEER_PATH))
         .andRespond(withAccepted().location(uri));
     //second call to server to get the beerDTO through beerId which was returned by previous call
-    server.expect(method(HttpMethod.GET))
-        .andExpect(requestToUriTemplate(URL + GET_BEER_BY_ID_PATH, beerDTOTestObject.getId()))
-        .andRespond(withSuccess(beerDTOJson, MediaType.APPLICATION_JSON));
+    mockGetOperation();
 
     BeerDTO beerDTOResponse = beerClient.createBeer(beerDTOTestObject);
     assertThat(beerDTOResponse.getBeerName()).isEqualTo("Mango Bobs");
 
   }
 
-  @Test
-  void getBeerById() {
-
+  private void mockGetOperation() {
     server.expect(method(HttpMethod.GET))
         .andExpect(requestToUriTemplate(URL + GET_BEER_BY_ID_PATH, beerDTOTestObject.getId()))
         .andRespond(withSuccess(beerDTOJson, MediaType.APPLICATION_JSON));
+  }
+
+  @Test
+  void getBeerById() {
+
+    mockGetOperation();
 
     BeerDTO beerDTO = beerClient.getBeerById(beerDTOTestObject.getId());
     assertThat(beerDTO.getId()).isEqualTo(beerDTOTestObject.getId());
