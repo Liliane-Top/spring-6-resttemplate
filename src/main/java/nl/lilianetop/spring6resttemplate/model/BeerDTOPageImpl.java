@@ -9,10 +9,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-@JsonIgnoreProperties(ignoreUnknown = true, value = "pageable")
+@JsonIgnoreProperties(ignoreUnknown = true, value = "pageable")//this property is not being returned by the payload, hence we want to ignore it
 public class BeerDTOPageImpl<BeerDTO> extends PageImpl<nl.lilianetop.spring6resttemplate.model.BeerDTO> {
 
-  @JsonCreator(mode= Mode.PROPERTIES)
+  @JsonCreator(mode= Mode.PROPERTIES)//annotation is for that this constructor should be used and bind the properties from payload to pojo
   public BeerDTOPageImpl(@JsonProperty("content") List<nl.lilianetop.spring6resttemplate.model.BeerDTO> content,
       @JsonProperty("number") int page,
       @JsonProperty("size") int size,
