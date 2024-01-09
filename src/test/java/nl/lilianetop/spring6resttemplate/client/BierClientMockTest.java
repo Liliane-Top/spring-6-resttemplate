@@ -1,10 +1,12 @@
 package nl.lilianetop.spring6resttemplate.client;
 
+import static nl.lilianetop.spring6resttemplate.client.BeerClientImpl.GET_BEER_BY_ID_PATH;
 import static nl.lilianetop.spring6resttemplate.client.BeerClientImpl.GET_BEER_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestToUriTemplate;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -60,6 +62,20 @@ class BierClientMockTest {
     // the RestTemplateBuilder is being mocked
     when(mockRestTemplateBuilder.build()).thenReturn(restTemplate);
     beerClient = new BeerClientImpl(mockRestTemplateBuilder);
+  }
+
+  @Test
+  void getBeerById() throws JsonProcessingException {
+
+    BeerDTO beerDTOTest = getBeerDto();
+    String payLoad = objectMapper.writeValueAsString(beerDTOTest);
+
+    server.expect(method(HttpMethod.GET))
+        .andExpect(requestToUriTemplate(URL + GET_BEER_BY_ID_PATH, beerDTOTest.getId()))
+        .andRespond(withSuccess(payLoad, MediaType.APPLICATION_JSON));
+
+    BeerDTO beerDTO = beerClient.getBeerById(beerDTOTest.getId());
+    assertThat(beerDTO.getId()).isEqualTo(beerDTOTest.getId());
   }
 
   @Test
