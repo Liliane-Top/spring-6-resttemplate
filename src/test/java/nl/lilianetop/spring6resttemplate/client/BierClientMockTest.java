@@ -5,6 +5,7 @@ import static nl.lilianetop.spring6resttemplate.client.BeerClientImpl.GET_BEER_P
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -89,6 +90,7 @@ class BierClientMockTest {
 
     server.expect(method(HttpMethod.GET))
         .andExpect(requestTo(uri))
+        .andExpect(header("Authorization", "Basic dXNlcjE6cGFzc3dvcmQ="))
         .andExpect(queryParam("beerName", "ALE"))
         .andRespond(withSuccess( response, MediaType.APPLICATION_JSON));
 
@@ -103,6 +105,7 @@ class BierClientMockTest {
 
     server.expect(method(HttpMethod.DELETE))
         .andExpect(requestToUriTemplate(URL + GET_BEER_BY_ID_PATH, beerDTOTestObject.getId()))
+        .andExpect(header("Authorization", "Basic dXNlcjE6cGFzc3dvcmQ="))
         .andRespond(withResourceNotFound());
 
     assertThrows(HttpClientErrorException.class, () -> {
@@ -118,6 +121,7 @@ class BierClientMockTest {
 
     server.expect(method(HttpMethod.DELETE))
         .andExpect(requestToUriTemplate(URL + GET_BEER_BY_ID_PATH, beerDTOTestObject.getId()))
+        .andExpect(header("Authorization", "Basic dXNlcjE6cGFzc3dvcmQ="))
         .andRespond(withNoContent());
 
     beerClient.deleteBeer(beerDTOTestObject.getId());
