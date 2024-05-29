@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
 @Configuration
@@ -32,9 +33,13 @@ public class RestTemplateBuilderConfig {
     }
 
     @Bean
+    public RestClient.Builder restClientBuilder(RestTemplateBuilder restTemplateBuilder) {
+        return RestClient.builder(restTemplateBuilder.build());
+    }
+
+    @Bean
     RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer,
                                             OAuthClientInterceptor interceptor) {
-
         assert rootUrl != null;
 
         return configurer
